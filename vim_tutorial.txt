@@ -1,0 +1,484 @@
+*vim_tutorial.txt*	For Vim version 8.2.	Last change: 2020 Jul 25
+
+
+		       VIM TUTORIAL	by Beomjoon Goh
+
+A short tutorial						*vim-tutorial*
+GOAL
+  * Show how not to spam the same keys 1000 times.
+  * Introduce some features, so that we could search later when needed.
+
+1. |Basics|
+	|Modes|, |Default_key_binding|, |Window_layout|, |Useful_command|
+2. |Operation|
+	|Operators|, |Registers|, |Macros|
+3. |Key_mapping|, |User_commands|
+4. |Folding|
+5. |IDE|
+	|Auto_completion|, |Snippet|, |QuickFix|, |Terminal|
+6. |Advanced|
+	Using plugin, LaTeX, Plugin development, My vim setup
+7. |Reference|
+
+See vimtutor								1 ~
+==============================================================================
+1. Basics							*Basics*
+
+
+    1.1 |Modes|
+
+
+    1.2 |Default_key_binding|
+    
+
+    1.3 |Window_layout|
+
+
+    1.4 |Useful_command|
+
+
+
+
+
+
+
+
+									2 ~
+------------------------------------------------------------------------------
+1.1 Modes							*Modes*
+
+    NORMAL
+		<ESC>
+
+    INSERT
+		i, I, a, A, o, O, s, S, c, C
+    
+    CMDLINE
+		:, /, ?, !
+    
+    VISUAL
+		v, V, CTRL-V
+    
+    TERMINAL
+		:terminal
+    
+    OTHERS 
+		Select, Ex, Replace, Visual-Replace, ...
+
+
+See :help vim-modes							3 ~
+------------------------------------------------------------------------------
+1.2 Default key binding					*Default_key_binding*
+
+>
+  .----.----.----.----.----.----.----.----.----.----.----.----.----.------.
+  | ~` | !1 | @2 | #3 | $4 | %5 | ^6 | &7 | *8 | (9 | )0 | _- | += |  DEL |
+  .------.----.----.----.----.----.----.----.----.----.----.----.----.----|
+  | TAB  | Qq | Ww | Ee | Rr | Tt | Yy | Uu | Ii | Oo | Pp | {[ | }] | |\ |
+  .-------.----.----.----.----.----.----.----.----.----.----.----.--------|
+  |  CAPS | Aa | Ss | Dd | Ff | Gg | Hh | Jj | Kk | Ll | :; | "' |  ENTER |
+  .---------.----.----.----.----.----.----.----.----.----.----.-----------|
+  |  SHIFT  | Zz | Xx | Cc | Vv | Bb | Nn | Mm | <, | >. | ?/ |   SHIFT   |
+  .-----.-----.-----.-----------------------------.-----.-----.-----.-----|
+  | CTRL| GUI | ALT |		 SPACE		  | ALT | FN  | GUI | CTRL|  
+  \-----^-----^-----^-----------------------------^-----^-----^-----^-----/
+<
+
+    `vi-vim-cheat-sheet.gif`
+
+    Personally not accustomed to: >
+	Q  m ` '  _ +  & ,
+<
+									4 ~
+------------------------------------------------------------------------------
+1.3 Window layout						*Window_layout*
+
+    Open with	 :split :vsplit :tabedit
+    Move with	 CTRL-W hjkl :tabnext :tabprevious >
+	.______________.
+	|	       |
+	|	w1     |
+	|	       |
+	|______________|
+	.________._____.
+	|	 |     |
+	|  w1	 |  w3 |
+	|________|_____|
+	|	w2     |
+	|______________|
+	._____tab1_____. ._____tab2.____. .___._tab3__.__.
+	|	       | |	   |	| |   |   |   |w4|
+	|	       | |   w1    |	| |   |   |   |__|
+	|      w1      | |_________| w2 | |w1 |w2 |w3 |w5|
+	|	       | |   w3    |	| |   |   |   |__|
+	|______________| |_________|____| |___|___|___|w6|
+See :help windows, :help tabpage, :help CTRL-W				5 ~
+------------------------------------------------------------------------------
+1.4 Useful command						*Useful_command*
+    CMDLINE
+	:w :q :e :wq :wa :wqa :qa
+	:!{cmd}			Execute external {cmd}
+	
+	:read [something]	[something]		{file} !{cmd}
+	
+	:[range]substitute/{pattern}/{string}/[flags]
+				[range]			% '<,'>
+				{pattern}		regex
+				[flags]			g i n
+
+	:find {file}		Open {file} in 'path'
+	
+	:help {subject}		Navigate with CTRL-], K
+				Go back by CTRL-T
+	
+	:Man {cmd}		Need in |vimrc|: `runtime! ftplugin/man.vim`
+    NORMAL
+	K			Invoke help/man/pydoc/cppman under the cursor.
+	CTRL-VI, CTRL-V$A	Insert front, Append back for multiple lines.
+									6 ~
+==============================================================================
+2. Operation							*Operation*
+
+
+    2.1 |Operators|
+
+
+    2.2 |Registers|
+
+
+    2.3 |Macros|
+
+
+
+
+
+
+
+
+
+
+
+									7 ~
+------------------------------------------------------------------------------
+2.1 Operators							*Operators*
+
+    STRUCTURE
+		    	  [count][operator]{text-object}
+		      "{register}[operator]{text-object}
+	       {range}"{register}[operator]
+    
+	[count]			Optional. Number of times
+	"{register}		Optional. Fill in named register
+	[operator]
+		c		change
+		d		delete
+		y		yank (copy)
+		v		visual: only [operator]{text-object}
+	{text-object}
+		[count]{motion}		Motion keys (`vi-vim-cheat-sheet.gif`)
+		a + ()[]{}"'`<>wWps	around 
+		i + ()[]{}"'`<>wWps	in, inside of
+    EXAMPLES
+	`d2W`, `2dW`, `ca(`, `da{`, `vi'y`, `yi'`, `dis`
+	This is For example, {a, b, (d c)} 'Hello'. Delete this sentence.
+See :help operator, :help objects, :help text-objects			8 ~
+------------------------------------------------------------------------------
+2.2 Registers							*Registers*
+
+    TYPES
+      Unnamed and Numbered ~
+	"			Default register, text with: Yy Dd Cc Ss Xx
+	0 to 9			Most recent 10 yanked/deleted texts
+
+      Named ~
+	a to z			Fills these registers only when you say so.
+				Case insensitive (not really).
+
+      Special and Read-only ~
+	- = * + ~ _ / : . % #
+
+    PASTE
+	"{register}p		Paste after  text stored in {registers}.
+	"{register}P		Paste before text stored in {registers}.
+
+    EXAMPLES
+	"aY			fill register 'a' this line.
+	"ap			paste text in register 'a' below.
+See :help registers, plugin 'vim-peekaboo'				9 ~
+------------------------------------------------------------------------------
+2.3 Macros							*Macros*
+
+    RECORD
+	1. q{register}		Start recording
+				{register} is named (or numbered)
+
+	2. Key strokes		Literally any thing
+
+	3. q			Stop recording
+    
+    PLAY
+	[count]@{register}	Execute the contents of {register} for [count]
+				times.
+
+	@@			Repeat previously executed macro
+
+    EXAMPLES
+	qb^dwJ2jq	At register 'b' (qb), go to the begining of line (^),
+	  ------	delete a word (dw), join a line (J), down 2 lines
+			(2j), stop record (q)
+	300@b		Execute 'b' 300 times
+See :help complex-repeat, :help q, :help recording			10 ~
+==============================================================================
+3. Key mapping, User command					*Key_mapping*
+
+    SYNTAX
+
+	{m}map	   {lhs} {rhs}
+	{m}noremap {lhs} {rhs}
+		{m}		Modes: n,i,v,t
+		{lhs}		Key(s) to be mapped
+		{rhs}		String
+	:{m}map			Shows current mappings 
+
+    EXAMPLES
+    >
+	imap	 <F9>	 <C-R>=strftime('%d %b %Y %T %z')<CR>
+	nnoremap <F2>	 :call ManLapack()<CR>
+
+	nnoremap <UP>	 <NONE>
+	nnoremap <DOWN>  <NONE>
+	nnoremap <LEFT>  <NONE>
+	nnoremap <RIGHT> <NONE>
+<
+See :help key-mapping							11 ~
+==============================================================================
+3. Key mapping, User commands					*User_commands*
+
+    SYNTAX
+
+	command[!] [{attr}...] {cmd} {rep}
+		{cmd}		Command. Fisrt letter must be upper case.
+		{rep}		Replacing commands.
+
+    EXAMPLES
+	In |vimrc| >
+	command Q q
+	command W w
+
+	command Vn vertical split ~/.scratchpad.txt
+
+	command -nargs=? -complete=file_in_path Vfind vnew <bar> find <args>
+	command -bang -nargs=? -complete=file W w<bang> <args>
+
+	command! -nargs=? GO call SlideGoto(<q-args>)
+
+
+See :help user-commands							12 ~
+==============================================================================
+4. Folding							*Folding*
+
+    'foldmethod'
+	marker			Defined by {{{, }}}
+	indent			python, bash
+	syntax			C, C++, 
+    
+    Eg. in |vimrc|
+	`set foldmethod=indent`
+    
+    COMMANDS
+	za			toggle folding
+	zM			open all foldings
+	zR			close all foldings
+    
+    DEMO
+	{{{
+	`demo/folding/plot.py`
+	`demo/folding/maths.cpp`
+	`demo/folding/ctqmc.tex`
+	}}}
+See :help folding							13 ~
+==============================================================================
+5. IDE (kind of)						*IDE*
+
+
+    5.1 |Auto_completion|
+
+
+    5.2 |Snippet|
+
+
+    5.3 |QuickFix|
+
+
+    5.4 |Terminal|
+
+
+
+
+
+
+
+
+									14 ~
+------------------------------------------------------------------------------
+5.1 Auto completion					*Auto_completion*
+
+    INSERT
+	CTRL-N			General completion
+	CTRL-X CTRL-F		File completion
+	CTRL-X CTRL-N		Keyword completion
+	CTRL-X CTRL-]		Tags completion
+	...
+
+    POPUP MENU
+	CTRL-N			Next suggestion
+	CTRL-P			Previous suggestion
+
+    PLUGIN
+	vim-autocomplpop	https://github.com/othree/vim-autocomplpop
+				Automatically draws a pop-up if two characters
+				are typed. Hitting <CR> inserts the completion.
+	There are many others
+
+
+
+See :help ins_completion						15 ~
+------------------------------------------------------------------------------
+5.2 Snippet							*Snippet*
+
+    |SnipMate| plugin is great.
+
+    DESCRIPTION
+
+	A snippet is like a template.
+	For example, in C, typing "for<TAB>": >
+
+	    for (i = 0; i < count; i++) {
+	      /* code */
+	    }	
+<
+	Customization:		~/.vim/snippets/{Language}.snippets
+
+
+    DEMO
+	Auto completion & snippet usage >
+	( \sum_{i=1}^{n} i )^2 - \sum_{i=1}^{n} i^2
+	demo/ide/silly.py
+
+See https://github.com/garbas/vim-snipmate, :help SnipMate		16 ~
+------------------------------------------------------------------------------
+5.3 QuickFix							*QuickFix*
+
+    DEMO
+	`demo/ide/quickfix.cpp`
+
+    CMDLINE
+	:make			Invoke 'makeprg' (default "make").
+
+	:cwindow		Open the quickfix window if errors exist.
+
+	:cclose			Close the quickfix window.
+
+	:cnext			Next error.
+
+	:cprevious		Previous error.
+
+	:.cc			Jump to error under the cursor.
+
+    Key-mapping these commands are useful.
+
+
+See :help quickfix							17 ~
+------------------------------------------------------------------------------
+5.4 Terminal			Vim version 8.1			*Terminal*
+
+    BASIC USE
+	:terminal
+	:terminal bash -l
+	:terminal python3 abc.py
+
+    SYNTAX
+	:[range]terminal [options] [command]
+	:call term_start({cmd} ,{options})
+
+	For example, >
+	:vertical call term_start("bash --rcfile vim_term.sh", {
+		\ "term_finish" : "close",
+		\ "term_name" : "[Terminal] bash",
+		\ "term_cols" : min(150, &columns*0.4)
+		\ })
+<
+    MOVING
+	CTRL-W:			From TERMINAL mode to CMDLINE mode
+	CTRL-Wh,j,k,l		From TERMINAL to other window
+									18 ~
+------------------------------------------------------------------------------
+5.4 Terminal cont.
+
+    TERMINAL COMMUNICATION
+	Vim -> Terminal: builtin function~
+	term_sendkeys({buf}, {keys})
+
+	Terminal -> Vim: JSON API~
+	`echo -e ']51;["call", "Tapi_dothis", [arglist]]'`
+
+	Note "^[ = <Esc>" is CTRL-V <ESC>, "<07> = ^G" is CTRL-V CTRL-G
+
+
+
+    PLUGIN
+	Want to change directory
+	Want to open a file in parent vim
+	Want to get the quickfix list to vim
+	...
+
+	I'm writing one, it will be in public (eventually).
+
+See :help terminal							19 ~
+==============================================================================
+6. Advanced							*Advanced*
+
+
+    6.3 Using plugin
+	https://github.com/junegunn/vim-plug 
+
+    6.4 LaTeX
+	https://github.com/vim-latex/vim-latex
+
+    6.5 Plugin development
+	Chapter 8, R. Osipov, "Mastering Vim - Build a software development
+	enviroment with Vim and Neovim", (Packt, Birmingham, 2018)
+	https://learnvimscriptthehardway.stevelosh.com
+
+    6.6 My vim setup
+	https://github.com/BeomjoonGoh/vim
+
+
+
+
+
+									20 ~
+==============================================================================
+7. Reference							*Reference*
+
+    [1] https://www.vim.org
+
+    [2] https://vim.fandom.com/wiki/Vim_Tips_Wiki
+
+    [3] https://www.viemu.com
+
+    [4] https://learnvimscriptthehardway.stevelosh.com
+
+    [5] R. Osipov, "Mastering Vim - Build a software development enviroment
+	with Vim and Neovim", (Packt, Birmingham, 2018)
+
+    [6] D. Neil, "Modern Vim - Craft Your Development Enviroment with Vim 8 and
+	Neovim", (Pragmatic, Raleigh, 2018)
+
+    [7] J. Ilic, "Mastering Vim Quickly - From WTF to OMG in no time",
+	(Jolesoft, Berlin, 2017)
+
+
+
+									21 ~
+vim:tw=78:ts=8:noet:ft=help:norl:

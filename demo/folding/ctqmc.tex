@@ -1,0 +1,449 @@
+%        File: ctqmc.tex
+%     Created: Thu Aug 07 02:00 PM 2014 K
+% Last Change: Thu Aug 07 02:00 PM 2014 K
+%
+\documentclass[a4paper]{article}
+\title{Hybridization Expansion Continuous-Time Quantum Monte Carlo}
+\author{Beomjoon Goh}
+%%%%%%%%%%     Packages & Options     %%%%%%%%%%
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{braket}
+\usepackage{dcolumn}
+\usepackage{esint}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{kotex}
+\usepackage{mathtools}
+\usepackage[version=3]{mhchem}
+\usepackage{paralist}
+\usepackage{xy}
+
+\usepackage[pdftex]{hyperref}
+
+\DeclareMathOperator{\Tr}{Tr}
+\begin{document}
+\maketitle
+
+\section{Introduction} % (fold)
+\label{sec:Introduction}
+% section Introduction (end)
+Formal Derivation of Dynamical Mean Field Theory
+
+\section{Formal Derivation of Dynamical Mean Field Theory} % (fold)
+\label{sec:Formal Derivation of Dynamical Mean Field Theory}
+
+\subsection{Nontrivial Limit in High Dimensions} % (fold)
+\label{sub:Nontrivial Limit in High Dimensions}
+The kinetic term for $d$-dimensional hyper-cubic lattice is 
+\begin{equation}
+    H_0 = \sum_{<i,j>}\sum_{\sigma} t_{ij} c^{\dagger}_{i\sigma}c_{j\sigma}
+        = \sum_{\mathbf{k},\sigma} \epsilon_{\mathbf{k}} n_{\mathbf{k}\sigma}
+\end{equation}
+Considering only nearest neighbor hopping with amplitude $t_{ij} = -t$ and with
+lattice spacing $a$, the dispersion $\epsilon_{\mathbf{k}}$ and the
+corresponding density of state are given by
+\begin{equation}
+    \epsilon_{\mathbf{k}} = -2t \sum_{n=1}^{d} \cos(k_n a)
+\end{equation}
+\begin{equation}
+    N_d(\omega) = \sum_{\mathbf{k}} \delta(\hbar\omega - \epsilon_{\mathbf{k}})
+\end{equation}
+
+The central limit theorem implies that in the limit $d \to \infty$,
+\begin{equation}
+    N_d(\omega) \xrightarrow{d \to \infty} 
+        \frac{1}{2t\sqrt{\pi d}}
+        \exp \left[ -\left( \frac{\omega}{2t\sqrt{\pi d}} \right)^2 \right]
+\end{equation}
+If $t$ is not scaled properly, this DOS is trivial. To have non trivial limit,
+\begin{equation}
+    t \to \frac{t'}{\sqrt{d}},\ t' = \text{const.}
+\end{equation}
+
+In this scaled model, on could get many simplifications which can be found with
+the perturbation theory in terms of $U$. Stating only the results, the self
+energy becomes a purely local quantity
+\begin{equation}
+    \Sigma_{ij,\sigma}(\omega) \xrightarrow{d \to \infty}
+        \Sigma_{ii,\sigma}(\omega) \delta_{ij}
+\end{equation}
+and the Fourier transform is $k$ independent
+\begin{equation}
+    \Sigma_{\sigma}(\mathbf{k}, \omega) \xrightarrow{d \to \infty}
+        \Sigma_{\sigma}(\omega)
+\end{equation}
+Consequently, the interacting Greens function becomes
+\begin{equation}
+    G_{\mathbf{k,\sigma}}(\omega) =
+        \frac{1}{\omega - \epsilon_{\mathbf{k}} + \mu - \Sigma_{\sigma}(\omega)}
+\end{equation}
+and the $k$ dependency comes only from the noninteracting particles dispersion
+
+Lastly, for a homogeneous system, the local Greens function is the
+momentum-averaged lattice Greens function
+\begin{equation}
+    G_{ii\sigma}(\omega) = L^{-1}\sum_{\mathbf{k}} G_{\mathbf{k}\sigma}(\omega)
+\end{equation}
+% subsection Nontrivial Limit in High Dimensions (end)
+
+\subsection{Construction of the DMFT} % (fold)
+\label{sub:Construction of the DMFT}
+The following derivation will make use of the so-called cavity method. Starting
+point is
+\begin{equation}
+    \mathcal{Z} = \int \prod_{i\sigma} Dc^{*}_{i\sigma}Dc_{i\sigma} \exp [-S]
+\end{equation}
+\begin{equation}
+    S = \int_{0}^{\beta} d\tau
+        \left[
+            \sum_{i\sigma} c^{*}_{i\sigma}(\tau)
+            \left(\frac{\partial}{\partial\tau} - \mu \right)
+            c_{i\sigma}(\tau)
+           +\sum_{ij\sigma} t_{ij}c^{*}_{i\sigma}(\tau)c_{j\sigma}(\tau)
+           +\sum_{i}Uc^{*}_{i\uparrow}(\tau)c_{i\uparrow}(\tau)
+            c^{*}_{i\downarrow}(\tau)c_{i\downarrow}(\tau)
+        \right]
+\end{equation}
+Splitting the action in to three parts,
+\begin{equation}
+    S = S_0 + \Delta S + S^{(0)}
+\end{equation}
+\begin{eqnarray}
+    S_0 &=&
+        \int_{0}^{\beta} d\tau
+            \sum_{\sigma} c^{*}_{0\sigma}(\tau)
+            \left(\frac{\partial}{\partial\tau} - \mu \right)
+            c_{0\sigma}(\tau)
+           +Uc^{*}_{0\uparrow}(\tau)c_{0\uparrow}(\tau)
+            c^{*}_{0\downarrow}(\tau)c_{0\downarrow}(\tau) \\
+    \Delta S &=&
+        \int_{0}^{\beta} d\tau
+            \sum_{i\sigma}
+            [t_{i0}c^{*}_{i\sigma}(\tau)c_{0\sigma}(\tau)
+             t_{0i}c^{*}_{0\sigma}(\tau)c_{i\sigma}(\tau)] \\
+    S^{(0)} &=&
+        \int_{0}^{\beta} d\tau
+        \left[
+            \sum_{i\neq0 \sigma}
+                c^{*}_{i\sigma}(\tau)
+                \left(\frac{\partial}{\partial\tau} - \mu \right)
+                c_{i\sigma}(\tau)
+           +\sum_{ij\neq0 \sigma}
+                t_{ij}c^{*}_{i\sigma}(\tau)c_{j\sigma}(\tau)
+           +\sum_{i\neq0}Uc^{*}_{i\uparrow}(\tau)c_{i\uparrow}(\tau)
+            c^{*}_{i\downarrow}(\tau)c_{i\downarrow}(\tau)
+        \right] \\
+\end{eqnarray}
+The partition function now reads
+\begin{equation}
+    \mathcal{Z} =
+        \mathcal{Z}^{(0)}
+        \int \prod_{\sigma} Dc^{*}_{0\sigma}Dc_{0\sigma}
+            \exp[-S_{0}] \braket{\exp[-\Delta S]}_{(0)}
+\end{equation}
+where the ensemble average is
+\begin{equation}
+    \braket{X}_{(0)} = 
+        \frac{1}{\mathcal{Z}^{(0)}} \int\prod_{i\neq0 \sigma}
+            Dc^{*}_{i\sigma}Dc_{i\sigma} X \exp [-S^{(0)}]
+\end{equation}
+
+Performing the cumulant expansion, and scaling the hopping amplitude, only the 
+Greens function
+\begin{equation}
+    G_{jk\sigma}^{(0)} (\tau_1 - \tau_2) =
+        -\braket{T_\tau c_{j\sigma}(\tau_1) c_{k\sigma}^*(\tau_2)}_{(0)}
+\end{equation}
+or disconnected contributions of products of the Greens function remains, and 
+applying the linked cluster theorem (collecting connected ones) one gets the
+local action
+\begin{eqnarray}
+    S_{\text{loc}} &=&
+        \Bigg[
+            \int_{0}^{\beta} d\tau
+                \sum_{\sigma} c^{*}_{0\sigma}(\tau)
+                \left(\frac{\partial}{\partial\tau} - \mu \right)
+                c_{0\sigma}(\tau)
+               +Uc^{*}_{0\uparrow}(\tau)c_{0\uparrow}(\tau)
+                c^{*}_{0\downarrow}(\tau)c_{0\downarrow}(\tau) \\
+         && +\int_{0}^{\beta} d\tau_1 \int_{0}^{\beta} d\tau_2
+                \sum_{j,k \neq 0 \sigma}
+                t'_{j0} t'_{k0} G_{jk\sigma}^{(0)} (\tau_1 - \tau_2)
+                c^{*}_{0\sigma}(\tau_1) c_{0\sigma}(\tau_2)
+         \Bigg]
+\end{eqnarray}
+
+Now the hybridization function $\Delta$ and the non interacting local Greens
+function or the free ``Weiss'' mean field propagator $\mathcal{G}$ is introduced
+\begin{equation}
+    \Delta_{\sigma} (\tau_1 - \tau_2) =
+        - \sum_{i,j\neq0} t'_{i0} t'_{j0} G_{ij\sigma}^{(0)} (\tau_1 - \tau_2)
+\end{equation}
+\begin{equation}
+    \mathcal{G}_{\sigma}^{-1} (\tau_1 - \tau_2) =
+        -\left(\frac{\partial}{\partial\tau_1} - \mu\right)\delta_{\tau_1\tau_2}
+        -\Delta_{\sigma}(\tau_1 - \tau_2)
+\end{equation}
+so that
+\begin{equation}
+    S_{\text{loc}} =
+        \int_{0}^{\beta} d\tau_1 \int_{0}^{\beta} d\tau_2 \sum_{\sigma}
+            c^{*}_{\sigma}(\tau_1)
+            \mathcal{G}_{\sigma}^{-1} (\tau_1 - \tau_2)
+            c_{\sigma}(\tau_2)
+       +U \int_{0}^{\beta} d\tau
+            c^{*}_{\uparrow}(\tau)c_{\uparrow}(\tau)
+            c^{*}_{\downarrow}(\tau)c_{\downarrow}(\tau)
+\end{equation}
+The local Greens function is, as usual,
+\begin{equation}
+    G_{\sigma}(i\omega_n) =
+        -\frac{1}{\mathcal{Z}}
+        \int\prod_{\sigma} Dc_{\sigma}^{*}Dc_{\sigma}
+            [c_{\sigma}(i\omega_n)c_{\sigma}^{*}(i\omega_n)] 
+            \exp[ -S_\text{loc} ]
+\end{equation}
+where
+\begin{equation}
+    \mathcal{Z} = 
+        \int\prod_{\sigma} Dc_{\sigma}^{*}Dc_{\sigma} \exp[-S_\text{loc}]
+\end{equation}
+This local Greens function and the ``Weiss'' mean field obey the Dyson equation
+\begin{eqnarray}
+    [G_{\sigma}(i\omega_n)]^{-1}
+        &=& \mathcal{G}_{\sigma}^{-1}(i\omega_n) -\Sigma_\sigma(i\omega_n) \\
+        &=& i\omega_n -\mu -\Delta_\sigma(i\omega_n) -\Sigma_\sigma(i\omega_n)
+\end{eqnarray}
+Lastly, as we have seen, the lattice Greens function and the local Greens
+function satisfies
+\begin{equation}
+    G_{\sigma}(i\omega_n) = \sum_{\mathbf{k}} G_{\mathbf{k}\sigma}(i\omega_n)
+\end{equation}
+which completes the full circle.
+
+
+% subsection Construction of the DMFT (end)
+% section Formal Derivation of Dynamical Mean Field Theory (end)
+
+\section{Continuous-Time Quantum Monte Carlo Impurity Solver} % (fold)
+\label{sec:Continuous-Time Quantum Monte Carlo Impurity Solver}
+\subsection{Hybridisation Expansion} % (fold)
+\label{sub:Hybridisation Expansion}
+Writing the Anderson impurity model,
+\begin{eqnarray}
+    H &=&   H_{\text{loc}} + H_{\text{bath}} + H_{\text{hyb}} \\
+       &&   H_{\text{loc}} =
+                Un_{\uparrow}n_{\downarrow}-\mu(n_{\uparrow}+n_{\downarrow}) \\
+       &&   H_{\text{bath}} =
+                \sum_{\mathbf{k}\sigma} \epsilon_{\mathbf{k}}
+                c_{\mathbf{k}\sigma}^{\dagger}c_{\mathbf{k}\sigma}\\
+       &&   H_{\text{hyb}} = 
+                \sum_{\mathbf{k}\sigma}
+                \left( 
+                    V_{\mathbf{k}\sigma}^{*}
+                    c_{\mathbf{k}\sigma}^{\dagger}d_{\sigma}
+                   +\text{h.c}
+                \right) \\
+\end{eqnarray}
+After switching to an interaction representation in which
+\begin{equation}
+    O(\tau) = 
+        e^{ \tau(H_{\text{loc}} + H_{\text{bath}})}
+        O
+        e^{-\tau(H_{\text{loc}} + H_{\text{bath}})}
+\end{equation}
+the partition function becomes
+\begin{eqnarray}
+    \mathcal{Z} 
+        &=& \Tr_{d}\Tr_{c} \left[
+                e^{-\beta(H_{\text{loc}} + H_{\text{bath}})} T\exp \left(
+                    -\int_{0}^{\beta}d\tau H_{\text{hyb}}(\tau)
+                    \right)
+                \right] \\
+        &=& \sum_{n=0}^{\infty} \int_{0}^{\beta} \cdots \int_{0}^{\beta}
+                d\tau_{1} \cdots d\tau_{2n} \frac{1}{(2n)!} \Tr_{d}\Tr_{c} \left[
+                    e^{-\beta(H_{\text{loc}} + H_{\text{bath}})}
+                    T (-H_{\text{hyb}}(\tau_{2n}))
+                    \cdots (-H_{\text{hyb}}(\tau_{1}))
+                \right] \\
+        &=& \sum_{C} W_C \\
+\end{eqnarray}
+where $C$ is a collection of time points on $[0,\beta]$, $\sum_{C} =
+\sum_{n=0}^{\infty} \int_{0}^{\beta} \cdots \int_{0}^{\beta}$, and $W_C$ is the
+rest.
+
+To get a non-zero trace, we need to consider even number of perturbations. Since
+each hybridisation operator changes the number of electrons on the impurity site
+by $+1$ or $-1$. We need to get back to the same number of electrons on the
+impurity and that's only possible for the even perturbation order.
+
+One can simplify more by recognising the hybridisation Hamiltonian consists of 
+two part:
+\begin{equation}
+    H_{\text{hyb}} = H_{\text{hyb}}^{d^{\dagger}} + H_{\text{hyb}}^{d}
+\end{equation}
+As mentioned above, to get a non-zero $\mathcal{Z}$, the number of operations
+in each parts must be the same: Among $2n$, $n$ for each. Thus, there are
+$\dfrac{2n!}{n!n!}$ possibilities to distribute those operators on $[0,\beta]$.
+\begin{eqnarray}
+    \mathcal{Z} 
+        &=& \sum_{n=0}^{\infty} 
+            \left(
+                \int_{0}^{\beta}d\tau_{1} \cdots \int_{0}^{\beta}d\tau_{n}
+            \right)
+            \left(
+                \int_{0}^{\beta}d\tau_{1}' \cdots \int_{0}^{\beta}d\tau_{n}'
+            \right)
+            \frac{1}{(n!)^2} \Tr_{d}\Tr_{c} \Bigg[
+                e^{-\beta(H_{\text{loc}} + H_{\text{bath}})} \\
+        &&  (-H_{\text{hyb}}^{d}(\tau_{n}))
+            (-H_{\text{hyb}}^{d^{\dagger}}(\tau_{n}'))
+            \cdots
+            (-H_{\text{hyb}}^{d}(\tau_{1}))
+            (-H_{\text{hyb}}^{d^{\dagger}}(\tau_{1}'))
+            \Bigg] \\
+\end{eqnarray}
+
+For this Anderson impurity model, the time evolution part doesn't contain a
+spin flip term (doesn't rotate the spin). Therefore we need the same number of
+$d^{\dagger}_\sigma$ and $d_\sigma$ for each spin $\sigma$, so that there are
+$\dfrac{n!}{n_{\uparrow}!n_{\downarrow}!}$ possibilities to distribute the 
+operator. Writing again explicitly,
+\begin{eqnarray*}
+    \mathcal{Z}
+        &=& \sum_{\{n_\sigma\}} \prod_{\sigma}
+            \left(
+                \int_{0}^{\beta}d\tau_{1}^\sigma
+                \cdots
+                \int_{\tau_{n_{\sigma}-1}^\sigma}^{\beta}
+                    d\tau_{n_\sigma}^\sigma
+            \right)
+            \left(
+                \int_{0}^{\beta}d\tau_{1}'^{\sigma}
+                \cdots
+                \int_{\tau_{n_{\sigma}-1}'^\sigma}^{\beta}
+                    d\tau_{n_\sigma}'^\sigma
+            \right) \\
+        &&  \Tr_{d}\Tr_{c} \Bigg[ 
+            e^{-\beta(H_{\text{loc}} + H_{\text{bath}})} T \prod_{\sigma}
+            \sum_{k_{1}^{\sigma} \cdots k_{n_\sigma}^{\sigma}}
+            \sum_{k_{1}'^{\sigma} \cdots k_{n\sigma}'^{\sigma}}
+            V_{k_{1}^{\sigma}}^{*}V_{k_{1}'^{\sigma}} \cdots
+            V_{k_{n_{\sigma}}^{\sigma}}^{*}V_{k_{n_{\sigma}}'^{\sigma}} \\
+        &&  c_{k_{n_\sigma}^{\sigma}\sigma}^{\dagger} (\tau_{n_\sigma}^\sigma)
+            d_{\sigma} (\tau_{n_\sigma}^\sigma)
+            d_{\sigma}^{\dagger} (\tau_{n_\sigma}'^\sigma)
+            c_{k_{n_\sigma}'^{\sigma}\sigma} (\tau_{n_\sigma}'^\sigma)
+            \cdots
+            c_{k_{1}^{\sigma}\sigma}^{\dagger} (\tau_{1}^\sigma)
+            d_{\sigma} (\tau_{1}^\sigma)
+            d_{\sigma}^{\dagger} (\tau_{1}'^\sigma)
+            c_{k_{1}'^{\sigma}\sigma} (\tau_{n_\sigma}'^\sigma)\\
+\end{eqnarray*}
+
+Since the time evolution does not mix the impurity and the bath, we can 
+calculate $\Tr_d$ and $\Tr_c$ separately. Denoting $A^{\sigma}_{\text{loc}}$ as
+a segement representation of impurity operators of spin $\sigma$ on $[0,\beta]$
+and $A^{\sigma}_{\text{bath}}$ as a segement representation of bath operators of
+spin $\sigma$ on $[0,\beta]$, one can write as follows. For impurity,
+\begin{equation}
+    \Tr_{d} \left[ e^{-\beta H_{\text{loc}}} A^{\sigma}_{\text{loc}} \right]
+\end{equation}
+and for bath,
+\begin{equation}
+    \left(\mathcal{Z_{\text{bath}}} \frac{1}{\mathcal{Z_{\text{bath}}}} \right)
+    \Tr_{c} \left[
+        e^{-\beta H_{\text{bath}}} \prod_{\sigma}
+        \sum_{k_{1}^{\sigma} \cdots k_{n_\sigma}^{\sigma}}
+        \sum_{k_{1}'^{\sigma} \cdots k_{n\sigma}'^{\sigma}}
+        V_{k_{1}^{\sigma}}^{*}V_{k_{1}'^{\sigma}} \cdots
+        V_{k_{n_{\sigma}}^{\sigma}}^{*}V_{k_{n_{\sigma}}'^{\sigma}}
+        A^{\sigma}_{\text{bath}}
+        \right]
+\end{equation}
+
+The bath part can be seen as $\mathcal{Z_{\text{bath}}}$ times some expectation
+value of a $n$-point correlation function for a non-interacting problem. And
+this expectation value can be solved exactly via the Wick's theorem. We know
+the answer is a determinant of a $n \times n$ matrix (spin block diagonalised
+of course):
+\begin{equation}
+    \prod_{\sigma} \det \left(M_{\sigma}^{-1}\right)
+    \quad \text{where,} \ 
+    \left(M_{\sigma}^{-1}\right)_{ij} = \Delta_{\sigma} (\tau_{i}' - \tau_{j})
+\end{equation}
+$\Delta$ is the famous hybridisation function. Now for a collection $C$, we have
+\begin{equation}
+    W_{C} = 
+        \Tr_{d} \left[ e^{-\beta H_{\text{loc}}} A^{\sigma}_{\text{loc}} \right]
+        \mathcal{Z_{\text{bath}}} \prod_{\sigma}\det\left(M_{\sigma}^{-1}\right)
+        (d\tau)^{2n_\sigma}
+\end{equation}
+In the segment representation, one can calculates the $Tr_{d}[\cdots]$ as
+\begin{equation}
+    Tr_{d}[\cdots] = s e^{\mu(\sum_{\sigma}l_{\sigma}) - U l_{\text{over}}}
+\end{equation}
+with a permutation sign from the time ordering $s$.
+% subsection Hybridisation Expansion (end)
+
+\subsection{Monte Carlo Sampling} % (fold)
+\label{sub:Monte Carlo Sampling}
+This Generates all possible segment configurations through local updates. Simple
+moves such as insertion and removal of one segment or one anti segment are shown
+to be enough to achieve this.
+The detailed balance condition is
+\begin{equation}
+    W_{C} P(C \to C')  = W_{C'} P(C' \to C)
+\end{equation}
+\begin{equation}
+    P(C \to C') = P^{\text{prob}}(C \to C') P^{\text{acc}}(C \to C')
+\end{equation}
+With metropolise algorithm, one can calculate the probability for accepting the
+move as $\min [ R, 1 ]$ where,
+\begin{equation}
+    R = \frac{P^{\text{prob}}(C \to C')}{P^{\text{prob}}(C \to C')}
+      = \frac{P^{\text{acc}}(C' \to C)}{P^{\text{acc}}(C' \to C)}
+        \frac{W_{C'}}{W_{C}} 
+\end{equation}
+% subsection Monte Carlo Sampling (end)
+
+\subsection{Measurement of the Greens Function} % (fold)
+\label{sub:Measurement of the Greens Function}
+\begin{equation}
+    G(\tau,0)
+        = \frac{1}{\mathcal{Z}} \sum_{C} W_{C}^{d(\tau)d^{\dagger}(0)}
+        = \frac{1}{\mathcal{Z}} \sum_{C} W_{C}^{(0,\tau)}
+            \frac{W_{C}^{d(\tau)d^{\dagger}(0)}}{W_{C}^{(0,\tau)}}
+\end{equation}
+\begin{equation}
+    \frac{W_{C}^{d(\tau)d^{\dagger}(0)}}{W_{C}^{(0,\tau)}}
+        = \frac{\det M^{-1}}{\det(M^{(0,\tau)})^{-1}}
+        = (M)_{ji}
+\end{equation}
+\begin{equation}
+    G(\tau) = 
+        \left\langle \sum_{ij}\frac{1}{\beta}
+        \hat{\delta}(\tau, \tau_i - \tau'_j) M_{ji}\right\rangle_{MC}
+\end{equation}
+% subsection Measurement of the Greens Function (end)
+
+\subsection{Kinetic Energy} % (fold)
+\label{sub:Kinetic Energy}
+\begin{eqnarray}
+    \int_{0}^{\beta} d\tau G(\tau) \Delta(\beta-\tau)
+        &=& \int_{0}^{\beta} d\tau 
+            \left\langle \sum_{ij}\frac{1}{\beta}
+            \hat{\delta}(\tau, \tau_i - \tau'_j) M_{ji}\right\rangle
+            \Delta(\beta-\tau) \\
+        &=& -\left\langle \sum_{ij}\frac{1}{\beta}
+            \Delta(\tau'_j - \tau_i) M_{ji}\right\rangle \\
+        &=& -\frac{1}{\beta} \braket{n}
+\end{eqnarray}
+% subsection Kinetic Energy (end)
+
+% section Continuous-Time Quantum Monte Carlo Impurity Solver (end)
+\end{document}

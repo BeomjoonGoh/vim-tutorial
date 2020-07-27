@@ -20,7 +20,7 @@ GOAL
 	Using plugin, LaTeX, Plugin development, My vim setup
 7. |Reference|
 
-See vimtutor								1 ~
+See vimtutor, https://github.com/BeomjoonGoh/vim-tutorial 	1 ~
 ==============================================================================
 1. Basics							*Basics*
 

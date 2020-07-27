@@ -363,7 +363,7 @@ See :help ins_completion						15 ~
     DEMO
 	Auto completion & snippet usage >
 	( \sum_{i=1}^{n} i )^2 - \sum_{i=1}^{n} i^2
-	demo/ide/silly.py
+	demo/ide/completion_snippet.py
 
 See https://github.com/garbas/vim-snipmate, :help SnipMate		16 ~
 ------------------------------------------------------------------------------

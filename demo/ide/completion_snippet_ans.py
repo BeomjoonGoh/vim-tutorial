@@ -22,9 +22,10 @@ def sumOne2toN2(n):
 if __name__ == '__main__':
     n = 10
     answer = sumOne2toN2(n) - square(sumOnetoN(n))
-    print(answer)
 
-    # or..
-    print(sum([ i**2 for i in range(1,n+1) ],0) - sum([ i for i in range(1,n+1) ],0)**2)
-    # or..
-    print(n*(n+1)*(2*n+1)/6 - (n*(n+1)/2)**2)
+    # or solve using 'list comprehension'
+    answer = sum([ i**2 for i in range(1,n+1) ], 0) - sum(range(1,n+1), 0)**2
+    # or solve analytically
+    answer = n*(n+1)*(2*n+1)/6 - (n*(n+1)/2)**2
+
+    print(answer)

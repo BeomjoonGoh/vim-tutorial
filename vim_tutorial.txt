@@ -325,6 +325,7 @@ See :help folding							13 ~
 
     INSERT
 	CTRL-N			General completion
+	CTRL-P			General completion
 	CTRL-X CTRL-F		File completion
 	CTRL-X CTRL-N		Keyword completion
 	CTRL-X CTRL-]		Tags completion
@@ -339,7 +340,6 @@ See :help folding							13 ~
 				Automatically draws a pop-up if two characters
 				are typed. Hitting <CR> inserts the completion.
 	There are many others
-
 
 
 See :help ins_completion						15 ~
